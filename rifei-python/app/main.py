@@ -17,7 +17,7 @@ from app.dependencies import get_optional_user, OptionalUser
 from app.models.models import User
 
 # Importar routers
-from app.routers import auth
+from app.routers import auth, marketplace
 
 # Diretório base
 BASE_DIR = Path(__file__).resolve().parent
@@ -59,6 +59,9 @@ templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 # Router de autenticação (inclui rotas de página e API)
 app.include_router(auth.router, tags=["auth"])
+
+# Router de marketplace (rifas e categorias)
+app.include_router(marketplace.router)
 
 
 # ===========================================
