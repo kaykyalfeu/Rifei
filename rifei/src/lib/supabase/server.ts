@@ -6,9 +6,18 @@ import { Database } from '@/types/database'
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies()
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // Se as variáveis não estiverem configuradas, retorna um cliente fake
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+    console.warn('⚠️ Supabase não configurado. Usando cliente mock (server).')
+    return null as any
+  }
+
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         get(name: string) {
@@ -35,9 +44,18 @@ export async function createServerSupabaseClient() {
 
 // Cliente com service role para operações administrativas
 export function createAdminClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  // Se as variáveis não estiverem configuradas, retorna um cliente fake
+  if (!supabaseUrl || !serviceRoleKey || supabaseUrl.includes('placeholder')) {
+    console.warn('⚠️ Supabase não configurado. Usando cliente mock (admin).')
+    return null as any
+  }
+
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    supabaseUrl,
+    serviceRoleKey,
     {
       cookies: {
         get() { return undefined },

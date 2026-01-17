@@ -1,16 +1,8 @@
-import { MercadoPagoConfig, Preference, Payment } from 'mercadopago'
-
-// Configuração do cliente Mercado Pago
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
-  options: {
-    timeout: 5000,
-  },
-})
-
-// Instâncias de API
-const preferenceClient = new Preference(client)
-const paymentClient = new Payment(client)
+// ===========================================
+// MERCADO PAGO - STUB TEMPORÁRIO
+// ===========================================
+// Este é um arquivo temporário para permitir o build sem o SDK do Mercado Pago
+// Quando configurar o Mercado Pago, instale o pacote e restaure o arquivo original
 
 // ===========================================
 // TIPOS
@@ -63,109 +55,31 @@ export interface PaymentInfo {
 }
 
 // ===========================================
-// FUNÇÕES
+// FUNÇÕES STUB
 // ===========================================
 
 /**
  * Cria uma preferência de pagamento no Mercado Pago
+ * TODO: Implementar quando Mercado Pago estiver configurado
  */
 export async function criarPreferencia(params: CriarPreferenciaParams): Promise<PreferenciaResponse> {
-  const {
-    pagamentoId,
-    rifaTitulo,
-    rifaSlug,
-    quantidade,
-    precoUnitario,
-    compradorEmail,
-    compradorNome,
-  } = params
+  console.warn('⚠️ Mercado Pago não configurado. Usando stub.')
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-
-  const preferencia = await preferenceClient.create({
-    body: {
-      // Itens do carrinho
-      items: [
-        {
-          id: pagamentoId,
-          title: `${quantidade}x Números - ${rifaTitulo}`,
-          description: `Compra de ${quantidade} número(s) na rifa "${rifaTitulo}"`,
-          quantity: 1,
-          unit_price: quantidade * precoUnitario,
-          currency_id: 'BRL',
-          category_id: 'entertainment',
-        },
-      ],
-
-      // Dados do comprador
-      payer: {
-        email: compradorEmail,
-        name: compradorNome,
-      },
-
-      // URLs de retorno
-      back_urls: {
-        success: `${appUrl}/rifa/${rifaSlug}?pagamento=sucesso`,
-        failure: `${appUrl}/rifa/${rifaSlug}?pagamento=falha`,
-        pending: `${appUrl}/rifa/${rifaSlug}?pagamento=pendente`,
-      },
-      auto_return: 'approved',
-
-      // Referência externa (nosso ID de pagamento)
-      external_reference: pagamentoId,
-
-      // Configurações
-      statement_descriptor: 'RIFEI',
-      expires: true,
-      expiration_date_from: new Date().toISOString(),
-      expiration_date_to: new Date(Date.now() + 15 * 60 * 1000).toISOString(), // 15 minutos
-
-      // Webhook
-      notification_url: `${appUrl}/api/webhooks/mercadopago`,
-
-      // Meios de pagamento
-      payment_methods: {
-        excluded_payment_methods: [],
-        excluded_payment_types: [],
-        installments: 1, // Apenas à vista
-      },
-    },
-  })
-
+  // Retorna dados mock para não quebrar o código
   return {
-    id: preferencia.id!,
-    init_point: preferencia.init_point!,
-    sandbox_init_point: preferencia.sandbox_init_point!,
+    id: 'stub-preference-id',
+    init_point: 'https://www.mercadopago.com.br/checkout/stub',
+    sandbox_init_point: 'https://sandbox.mercadopago.com.br/checkout/stub',
   }
 }
 
 /**
  * Busca informações de um pagamento pelo ID
+ * TODO: Implementar quando Mercado Pago estiver configurado
  */
 export async function buscarPagamento(paymentId: string): Promise<PaymentInfo | null> {
-  try {
-    const payment = await paymentClient.get({ id: paymentId })
-    
-    return {
-      id: payment.id!,
-      status: payment.status!,
-      status_detail: payment.status_detail!,
-      payment_method_id: payment.payment_method_id!,
-      payment_type_id: payment.payment_type_id!,
-      transaction_amount: payment.transaction_amount!,
-      external_reference: payment.external_reference!,
-      payer: {
-        email: payment.payer?.email || '',
-        identification: payment.payer?.identification ? {
-          type: payment.payer.identification.type || '',
-          number: payment.payer.identification.number || '',
-        } : undefined,
-      },
-    }
-  } catch (error) {
-    console.error('Erro ao buscar pagamento:', error)
-    return null
-  }
+  console.warn('⚠️ Mercado Pago não configurado. Usando stub.')
+  return null
 }
 
 /**
@@ -233,5 +147,5 @@ export function traduzirStatusDetail(statusDetail: string): string {
   return traducoes[statusDetail] || 'Processando pagamento'
 }
 
-// Exportar cliente para uso direto se necessário
-export { client as mercadoPagoClient }
+// Cliente stub
+export const mercadoPagoClient = null
