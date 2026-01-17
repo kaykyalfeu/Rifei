@@ -1,8 +1,0 @@
-{
-  "buildCommand": "cd rifei && npm install && npm run build",
-  "outputDirectory": "rifei/.next",
-  "devCommand": "cd rifei && npm run dev",
-  "installCommand": "cd rifei && npm install",
-  "framework": "nextjs",
-  "regions": ["gru1"]
-}
