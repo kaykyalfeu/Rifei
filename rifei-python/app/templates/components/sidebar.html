@@ -1,0 +1,121 @@
+<!-- Sidebar Component -->
+<aside class="fixed left-0 top-16 bottom-0 w-64 glass border-r border-gray-200/50 dark:border-gray-700/50 hidden lg:block overflow-y-auto">
+    <nav class="p-4">
+        <!-- Menu Principal -->
+        <div class="space-y-1">
+            <a href="/feed" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' if active_page == 'feed' else 'hover:bg-gray-100 dark:hover:bg-gray-800' }} transition-colors font-medium">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span>Feed</span>
+            </a>
+            <a href="/marketplace" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' if active_page == 'marketplace' else 'hover:bg-gray-100 dark:hover:bg-gray-800' }} transition-colors font-medium">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Explorar</span>
+            </a>
+            <a href="/criar" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' if active_page == 'criar' else 'hover:bg-gray-100 dark:hover:bg-gray-800' }} transition-colors font-medium">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span>Criar Rifa</span>
+            </a>
+            <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' if active_page == 'dashboard' else 'hover:bg-gray-100 dark:hover:bg-gray-800' }} transition-colors font-medium">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+        
+        <!-- Categorias -->
+        <div class="mt-8">
+            <h3 class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                Categorias
+            </h3>
+            <div class="space-y-1">
+                {% for category in categories %}
+                <a href="/categoria/{{ category.slug }}" class="flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">{{ category.icon }}</span>
+                        <span class="font-medium">{{ category.name }}</span>
+                    </div>
+                    <span class="text-sm text-gray-400">{{ category.count }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Conquistas (se logado) -->
+        {% if user %}
+        <div class="mt-8">
+            <h3 class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                Suas Conquistas
+            </h3>
+            <div class="px-4">
+                <div class="glass rounded-2xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center">
+                            <i data-lucide="trophy" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold">Nível {{ user.level }}</p>
+                            <p class="text-sm text-gray-500">{{ user.xp }} XP</p>
+                        </div>
+                    </div>
+                    <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full gradient-primary rounded-full" style="width: {{ (user.xp % 1000) / 10 }}%"></div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">{{ 1000 - (user.xp % 1000) }} XP para o próximo nível</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Footer da Sidebar -->
+        <div class="mt-8 px-4">
+            <div class="glass rounded-2xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm">Rifei Premium</p>
+                        <p class="text-xs text-gray-500">Sem taxas + benefícios</p>
+                    </div>
+                </div>
+                <a href="/premium" class="block w-full py-2 text-center rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+                    Assinar agora
+                </a>
+            </div>
+        </div>
+    </nav>
+</aside>
+
+<!-- Mobile Menu Overlay -->
+<div 
+    x-show="mobileMenuOpen"
+    x-cloak
+    class="fixed inset-0 z-40 lg:hidden"
+>
+    <div 
+        class="absolute inset-0 bg-black/50"
+        @click="mobileMenuOpen = false"
+    ></div>
+    <aside class="absolute left-0 top-0 bottom-0 w-64 glass border-r border-gray-200/50 dark:border-gray-700/50 overflow-y-auto pt-16">
+        <nav class="p-4">
+            <!-- Mesmo conteúdo da sidebar desktop -->
+            <div class="space-y-1">
+                <a href="/feed" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="/marketplace" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                    <i data-lucide="compass" class="w-5 h-5"></i>
+                    <span>Explorar</span>
+                </a>
+                <a href="/criar" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>Criar Rifa</span>
+                </a>
+                <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+</div>

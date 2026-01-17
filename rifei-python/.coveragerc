@@ -1,0 +1,58 @@
+[run]
+# Arquivos para incluir no coverage
+source = app
+
+# Arquivos/diretórios para omitir
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */env/*
+    */migrations/*
+    */alembic/*
+    */templates/*
+    */static/*
+    app/__init__.py
+
+# Branch coverage (mede cobertura de branches if/else)
+branch = True
+
+[report]
+# Precisão decimal
+precision = 2
+
+# Mostrar linhas não cobertas
+show_missing = True
+
+# Pular arquivos vazios
+skip_empty = True
+
+# Ordenar por cobertura
+sort = Cover
+
+# Excluir linhas com esses padrões
+exclude_lines =
+    # Padrões padrão do coverage
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod
+    # Adicione outros padrões conforme necessário
+    pass
+    \.\.\\.
+
+[html]
+# Diretório para relatório HTML
+directory = htmlcov
+
+# Título do relatório
+title = Rifei Coverage Report
+
+[xml]
+# Arquivo de saída XML (para CI/CD)
+output = coverage.xml
