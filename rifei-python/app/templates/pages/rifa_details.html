@@ -1,0 +1,305 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ rifa.title }} - Detalhes{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 text-sm">
+        <a href="/" class="text-purple-600 hover:underline">Home</a>
+        <span class="mx-2">/</span>
+        <a href="/marketplace" class="text-purple-600 hover:underline">Marketplace</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-600">{{ rifa.title }}</span>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Coluna Principal -->
+        <div class="lg:col-span-2">
+            <!-- Imagem Principal -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+                <img src="{{ rifa.image_url or '/static/images/placeholder.jpg' }}"
+                     alt="{{ rifa.title }}"
+                     class="w-full h-96 object-cover">
+
+                <!-- Badges -->
+                <div class="p-4 flex gap-2">
+                    {% if rifa.is_featured %}
+                    <span class="bg-yellow-500 text-white text-xs px-3 py-1 rounded-full">
+                        ⭐ Em Destaque
+                    </span>
+                    {% endif %}
+                    {% if rifa.is_verified %}
+                    <span class="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                        ✓ Criador Verificado
+                    </span>
+                    {% endif %}
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-3 py-1 rounded-full">
+                        {{ rifa.category_name or 'Sem categoria' }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Título e Descrição -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    {{ rifa.title }}
+                </h1>
+
+                <div class="prose dark:prose-invert max-w-none">
+                    {{ rifa.description }}
+                </div>
+
+                <!-- Info do Criador -->
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                            {{ rifa.creator_username[0].upper() }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900 dark:text-white">
+                                {{ rifa.creator_name }}
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                @{{ rifa.creator_username }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seleção de Números -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+                 x-data="rifaNumbers({{ rifa.id }})">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Selecione seus Números
+                </h2>
+
+                <!-- Ações Rápidas -->
+                <div class="flex gap-2 mb-4">
+                    <button @click="selectRandom(1)"
+                            class="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200">
+                        🎲 1 Aleatório
+                    </button>
+                    <button @click="selectRandom(5)"
+                            class="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200">
+                        🎲 5 Aleatórios
+                    </button>
+                    <button @click="selectRandom(10)"
+                            class="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200">
+                        🎲 10 Aleatórios
+                    </button>
+                    <button @click="clearSelection"
+                            class="px-4 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 ml-auto">
+                        🗑️ Limpar
+                    </button>
+                </div>
+
+                <!-- Grid de Números -->
+                <div class="grid grid-cols-10 gap-2 mb-4">
+                    <template x-for="number in availableNumbers" :key="number">
+                        <button @click="toggleNumber(number)"
+                                :class="{
+                                    'bg-purple-600 text-white': selectedNumbers.includes(number),
+                                    'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-purple-100': !selectedNumbers.includes(number)
+                                }"
+                                class="aspect-square rounded-lg font-semibold text-sm transition-colors"
+                                x-text="String(number).padStart(4, '0')">
+                        </button>
+                    </template>
+                </div>
+
+                <!-- Resumo da Seleção -->
+                <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-700 dark:text-gray-300">
+                            Números selecionados:
+                        </span>
+                        <span class="font-bold text-purple-600 dark:text-purple-400"
+                              x-text="selectedNumbers.length">
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-gray-700 dark:text-gray-300">
+                            Valor total:
+                        </span>
+                        <span class="font-bold text-purple-600 dark:text-purple-400 text-xl"
+                              x-text="'R$ ' + (selectedNumbers.length * {{ rifa.price }}).toFixed(2)">
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Botão de Compra -->
+                <button @click="checkout"
+                        :disabled="selectedNumbers.length === 0"
+                        :class="selectedNumbers.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700'"
+                        class="w-full bg-purple-600 text-white font-bold py-4 rounded-lg transition-colors">
+                    <span x-show="selectedNumbers.length === 0">Selecione números para continuar</span>
+                    <span x-show="selectedNumbers.length > 0">
+                        Comprar <span x-text="selectedNumbers.length"></span> Número(s)
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Card de Informações -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6 sticky top-4">
+                <div class="text-center mb-6">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Valor do Número</p>
+                    <p class="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                        R$ {{ "%.2f"|format(rifa.price) }}
+                    </p>
+                </div>
+
+                <!-- Progresso -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600 dark:text-gray-400">Progresso</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                            {{ "%.1f"|format(rifa.progress_percent) }}%
+                        </span>
+                    </div>
+                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all"
+                             style="width: {{ rifa.progress_percent }}%">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+                        {{ rifa.sold_count }} de {{ rifa.total_numbers }} vendidos
+                    </p>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Disponíveis</span>
+                        <span class="font-semibold text-green-600">{{ rifa.available_count }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Compradores</span>
+                        <span class="font-semibold">{{ unique_buyers or 0 }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Visualizações</span>
+                        <span class="font-semibold">{{ rifa.view_count }}</span>
+                    </div>
+                </div>
+
+                <!-- Data de Término -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Termina em:</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">
+                        {{ rifa.end_date.strftime('%d/%m/%Y às %H:%M') }}
+                    </p>
+                    {% if days_remaining %}
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-2">
+                        ⏰ Faltam {{ days_remaining }} dia(s)
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Botão Compartilhar -->
+                <button class="w-full mt-6 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                    🔗 Compartilhar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function rifaNumbers(rifaId) {
+    return {
+        rifaId: rifaId,
+        availableNumbers: [],
+        selectedNumbers: [],
+        loading: true,
+
+        async init() {
+            await this.loadAvailableNumbers();
+        },
+
+        async loadAvailableNumbers() {
+            try {
+                const response = await fetch(`/marketplace/api/rifas/${this.rifaId}`);
+                const data = await response.json();
+                this.availableNumbers = data.available_numbers || [];
+                this.loading = false;
+            } catch (error) {
+                console.error('Erro ao carregar números:', error);
+                this.loading = false;
+            }
+        },
+
+        toggleNumber(number) {
+            const index = this.selectedNumbers.indexOf(number);
+            if (index > -1) {
+                this.selectedNumbers.splice(index, 1);
+            } else {
+                this.selectedNumbers.push(number);
+            }
+            this.selectedNumbers.sort((a, b) => a - b);
+        },
+
+        selectRandom(count) {
+            const available = this.availableNumbers.filter(
+                n => !this.selectedNumbers.includes(n)
+            );
+
+            if (available.length === 0) {
+                alert('Não há números disponíveis!');
+                return;
+            }
+
+            const toSelect = Math.min(count, available.length);
+
+            for (let i = 0; i < toSelect; i++) {
+                const randomIndex = Math.floor(Math.random() * available.length);
+                this.selectedNumbers.push(available[randomIndex]);
+                available.splice(randomIndex, 1);
+            }
+
+            this.selectedNumbers.sort((a, b) => a - b);
+        },
+
+        clearSelection() {
+            this.selectedNumbers = [];
+        },
+
+        async checkout() {
+            if (this.selectedNumbers.length === 0) {
+                return;
+            }
+
+            // Reservar números e redirecionar para checkout
+            try {
+                const response = await fetch(`/marketplace/api/rifas/${this.rifaId}/reserve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        numbers: this.selectedNumbers
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `/checkout/${data.reservation_id}`;
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Erro ao reservar números');
+                }
+            } catch (error) {
+                console.error('Erro ao fazer checkout:', error);
+                alert('Erro ao processar sua solicitação');
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

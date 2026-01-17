@@ -17,7 +17,7 @@ from app.dependencies import get_optional_user, OptionalUser
 from app.models.models import User
 
 # Importar routers
-from app.routers import auth, marketplace
+from app.routers import auth, marketplace, payment
 
 # Diretório base
 BASE_DIR = Path(__file__).resolve().parent
@@ -62,6 +62,9 @@ app.include_router(auth.router, tags=["auth"])
 
 # Router de marketplace (rifas e categorias)
 app.include_router(marketplace.router)
+
+# Router de pagamentos (checkout, PIX, webhooks)
+app.include_router(payment.router)
 
 
 # ===========================================
