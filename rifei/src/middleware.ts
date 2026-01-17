@@ -1,36 +1,18 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
 
-// Rotas públicas que não requerem autenticação
-const publicRoutes = [
-  '/',
-  '/login',
-  '/cadastro',
-  '/verificar',
-  '/marketplace',
-  '/rifa',
-  '/termos',
-  '/privacidade',
-  '/ajuda',
-  '/contato',
-  '/regulamento',
-]
-
-// Rotas que requerem autenticação
-const protectedRoutes = [
-  '/feed',
-  '/criar',
-  '/dashboard',
-  '/perfil',
-  '/configuracoes',
-  '/admin',
-]
-
+// Middleware simplificado que não depende do Supabase para não quebrar o build
 export async function middleware(request: NextRequest) {
-  // Atualizar sessão do Supabase
-  const response = await updateSession(request)
-
   const { pathname } = request.nextUrl
+
+  // Rotas protegidas que precisam de autenticação
+  const protectedRoutes = [
+    '/main/feed',
+    '/main/criar',
+    '/main/dashboard',
+    '/main/perfil',
+    '/main/configuracoes',
+    '/admin',
+  ]
 
   // Verificar se é uma rota protegida
   const isProtectedRoute = protectedRoutes.some(
@@ -38,12 +20,32 @@ export async function middleware(request: NextRequest) {
   )
 
   if (isProtectedRoute) {
-    // Aqui você pode adicionar lógica adicional para verificar
-    // se o usuário está autenticado e redirecionar se necessário
-    // Por enquanto, apenas retorna a resposta atualizada
+    // TODO: Quando Supabase estiver configurado, adicionar verificação de sessão
+    // Por enquanto, apenas permite o acesso (para não quebrar o build)
+    // const session = await getSession(request)
+    // if (!session) {
+    //   return NextResponse.redirect(new URL('/auth/login', request.url))
+    // }
   }
 
-  return response
+  // Redirecionar rotas antigas para as novas
+  if (pathname === '/login') {
+    return NextResponse.redirect(new URL('/auth/login', request.url))
+  }
+
+  if (pathname === '/cadastro') {
+    return NextResponse.redirect(new URL('/auth/cadastro', request.url))
+  }
+
+  if (pathname === '/marketplace') {
+    return NextResponse.redirect(new URL('/main/marketplace', request.url))
+  }
+
+  if (pathname === '/feed') {
+    return NextResponse.redirect(new URL('/main/feed', request.url))
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
@@ -54,7 +56,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - api routes
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }
