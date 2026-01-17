@@ -1,0 +1,44 @@
+# FastAPI e servidor
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Templates e frontend
+jinja2==3.1.3
+python-dotenv==1.0.0
+
+# Banco de dados
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+alembic==1.13.1
+
+# Supabase (opcional - pode usar direto o PostgreSQL)
+# supabase==2.3.4
+
+# Autenticação
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+
+# Validação
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==2.1.1
+
+# Mercado Pago
+mercadopago==2.2.1
+
+# Utilidades
+httpx>=0.24.0
+pillow==10.2.0
+python-dateutil==2.8.2
+pytz==2024.1
+
+# Desenvolvimento e Testes
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+aiosqlite==0.19.0
+faker==22.6.0
+black==24.1.1
+ruff==0.1.14
