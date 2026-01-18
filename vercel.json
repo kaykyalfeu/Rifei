@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd rifei && npm install && npm run build",
+  "outputDirectory": "rifei/.next",
+  "installCommand": "cd rifei && npm install",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}
