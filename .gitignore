@@ -15,8 +15,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+rifei-python/lib/
+rifei-python/lib64/
 parts/
 sdist/
 var/
@@ -52,9 +52,14 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# Environment variables
+# Environment variables (exceto .env.production para Vercel)
 .env
 .env.local
+.env.development.local
+.env.test.local
 
 # Uploads
 uploads/
+
+# Node modules
+node_modules/
