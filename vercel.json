@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "pip install -r rifei-python/requirements.txt",
+  "framework": null,
+  "installCommand": "pip install -r rifei-python/requirements.txt",
   "builds": [
     {
       "src": "rifei-python/app/main.py",
