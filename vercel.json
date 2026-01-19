@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "buildCommand": "pip install -r rifei-python/requirements.txt",
+  "builds": [
+    {
+      "src": "rifei-python/app/main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/rifei-python/app/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/rifei-python/app/main.py"
+    }
+  ]
+}
