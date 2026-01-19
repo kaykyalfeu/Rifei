@@ -1,0 +1,145 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Fale Conosco{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Hero -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black mb-6">Fale <span class="text-gradient">Conosco</span></h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">
+                Tem alguma duvida, sugestao ou precisa de ajuda? Estamos aqui para voce!
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Contact Form -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-6 md:p-8">
+                <h2 class="font-bold text-xl mb-6">Envie sua mensagem</h2>
+
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome completo</label>
+                        <input
+                            type="text"
+                            required
+                            placeholder="Seu nome"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input
+                            type="email"
+                            required
+                            placeholder="seu@email.com"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assunto</label>
+                        <select class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
+                            <option value="">Selecione um assunto</option>
+                            <option value="duvida">Duvida geral</option>
+                            <option value="pagamento">Problemas com pagamento</option>
+                            <option value="rifa">Problema com rifa</option>
+                            <option value="conta">Problema com conta</option>
+                            <option value="parceria">Parceria/Comercial</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mensagem</label>
+                        <textarea
+                            required
+                            rows="5"
+                            placeholder="Descreva sua duvida ou problema em detalhes..."
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none"
+                        ></textarea>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full py-4 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
+                    >
+                        Enviar Mensagem
+                    </button>
+                </form>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="space-y-6">
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="mail" class="w-6 h-6 text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">Email</h3>
+                            <p class="text-gray-500">suporte@rifei.com</p>
+                            <p class="text-sm text-gray-400 mt-1">Respondemos em ate 24 horas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="message-circle" class="w-6 h-6 text-violet-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">WhatsApp</h3>
+                            <p class="text-gray-500">(11) 99999-9999</p>
+                            <p class="text-sm text-gray-400 mt-1">Seg a Sex, 9h as 18h</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="instagram" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">Redes Sociais</h3>
+                            <p class="text-gray-500">@rifei.oficial</p>
+                            <p class="text-sm text-gray-400 mt-1">Instagram, Twitter, Facebook</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="clock" class="w-6 h-6 text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-1">Horario de Atendimento</h3>
+                            <p class="text-gray-500">Segunda a Sexta</p>
+                            <p class="text-sm text-gray-400 mt-1">9h as 18h (horario de Brasilia)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Link -->
+                <div class="bg-gradient-to-br from-emerald-500/10 to-violet-500/10 rounded-2xl p-6 border border-emerald-500/20">
+                    <h3 class="font-bold mb-2">Duvidas frequentes?</h3>
+                    <p class="text-gray-500 text-sm mb-4">Confira nossa central de ajuda com as perguntas mais comuns.</p>
+                    <a href="/ajuda" class="text-emerald-600 font-medium hover:underline flex items-center gap-1">
+                        Acessar Central de Ajuda
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

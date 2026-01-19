@@ -523,3 +523,124 @@ class TestAuthEdgeCases:
         # Dependendo da implementação, pode retornar 201 ou 422
         # Ajustar conforme necessário
         assert response.status_code in [status.HTTP_201_CREATED, status.HTTP_422_UNPROCESSABLE_ENTITY]
+
+
+# ===========================================
+# TESTES DE SEGURANÇA JWT - VALIDAÇÃO DE TIPO
+# ===========================================
+
+@pytest.mark.api
+@pytest.mark.auth
+@pytest.mark.security
+@pytest.mark.asyncio
+class TestJWTTokenTypeSecurity:
+    """
+    Testes de segurança para validação de tipo de token JWT.
+
+    CRÍTICO: Refresh tokens NÃO devem ser aceitos em rotas que esperam access tokens.
+    Esta é uma proteção importante contra uso indevido de tokens.
+    """
+
+    async def test_refresh_token_rejected_on_protected_route(
+        self, client: AsyncClient, test_user: User
+    ):
+        """
+        TESTE DE SEGURANÇA: Verifica que refresh token é rejeitado em rotas protegidas.
+
+        Um refresh token deve ser usado APENAS para obter um novo access token,
+        nunca para autenticar em rotas normais da API.
+        """
+        from app.services.auth import create_refresh_token
+
+        # Criar um refresh token válido para o usuário
+        refresh_token = create_refresh_token({"sub": str(test_user.id)})
+
+        # Tentar usar o refresh token como se fosse access token
+        headers = {"Authorization": f"Bearer {refresh_token}"}
+
+        response = await client.get("/api/auth/me", headers=headers)
+
+        # DEVE retornar 401 Unauthorized
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED, (
+            "FALHA DE SEGURANÇA: Refresh token foi aceito como access token! "
+            "Isso permite que um atacante use refresh tokens de longa duração "
+            "para acessar rotas protegidas."
+        )
+
+    async def test_access_token_accepted_on_protected_route(
+        self, client: AsyncClient, test_user: User, auth_headers: dict
+    ):
+        """Verifica que access token válido é aceito normalmente"""
+        response = await client.get("/api/auth/me", headers=auth_headers)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["id"] == test_user.id
+
+    async def test_expired_token_rejected(self, client: AsyncClient, test_user: User):
+        """Verifica que token expirado é rejeitado"""
+        from datetime import timedelta
+        from app.services.auth import create_access_token
+
+        # Criar token já expirado
+        expired_token = create_access_token(
+            {"sub": str(test_user.id), "email": test_user.email},
+            expires_delta=timedelta(seconds=-10)  # Expirou 10 segundos atrás
+        )
+
+        headers = {"Authorization": f"Bearer {expired_token}"}
+
+        response = await client.get("/api/auth/me", headers=headers)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_malformed_token_rejected(self, client: AsyncClient):
+        """Verifica que token malformado é rejeitado"""
+        headers = {"Authorization": "Bearer not.a.valid.jwt.token"}
+
+        response = await client.get("/api/auth/me", headers=headers)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_token_with_wrong_signature_rejected(
+        self, client: AsyncClient, test_user: User
+    ):
+        """Verifica que token com assinatura errada é rejeitado"""
+        from jose import jwt
+
+        # Criar token com chave secreta diferente
+        fake_token = jwt.encode(
+            {"sub": str(test_user.id), "type": "access"},
+            "wrong-secret-key",
+            algorithm="HS256"
+        )
+
+        headers = {"Authorization": f"Bearer {fake_token}"}
+
+        response = await client.get("/api/auth/me", headers=headers)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    async def test_token_type_must_be_access(self, client: AsyncClient, test_user: User):
+        """Verifica que apenas tokens com type='access' são aceitos"""
+        from jose import jwt
+        from app.config import settings
+        from datetime import datetime, timedelta, timezone
+
+        # Criar token com type diferente de 'access'
+        custom_token = jwt.encode(
+            {
+                "sub": str(test_user.id),
+                "type": "custom",  # Tipo diferente de 'access'
+                "exp": datetime.now(timezone.utc) + timedelta(hours=1)
+            },
+            settings.jwt_secret_key,
+            algorithm=settings.jwt_algorithm
+        )
+
+        headers = {"Authorization": f"Bearer {custom_token}"}
+
+        response = await client.get("/api/auth/me", headers=headers)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED, (
+            "Token com type diferente de 'access' não deveria ser aceito"
+        )

@@ -1,0 +1,165 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Como Funciona{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Hero -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-black mb-6">Como funciona o <span class="text-gradient">Rifei</span>?</h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">
+                A plataforma mais simples e segura para participar e criar rifas online no Brasil.
+            </p>
+        </div>
+
+        <!-- Para Participantes -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-black mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+                    <i data-lucide="ticket" class="w-5 h-5 text-white"></i>
+                </div>
+                Para quem quer participar
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-emerald-600">1</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Escolha uma rifa</h3>
+                    <p class="text-gray-500">Navegue pelo marketplace e encontre rifas com premios incriveis de criadores verificados.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-violet-600">2</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Compre seus numeros</h3>
+                    <p class="text-gray-500">Selecione seus numeros da sorte e pague via Pix ou cartao de forma rapida e segura.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-yellow-600">3</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Aguarde o sorteio</h3>
+                    <p class="text-gray-500">Acompanhe o sorteio e torça! Se seu numero for sorteado, voce ganha o premio.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Para Criadores -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-black mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-white"></i>
+                </div>
+                Para quem quer criar rifas
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-emerald-600">1</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Crie sua conta</h3>
+                    <p class="text-gray-500">Cadastre-se gratuitamente e complete seu perfil para se tornar um criador verificado.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-violet-600">2</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Configure sua rifa</h3>
+                    <p class="text-gray-500">Defina o premio, quantidade de numeros, preco e data do sorteio.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <div class="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl font-black text-yellow-600">3</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Receba e sorteie</h3>
+                    <p class="text-gray-500">Acompanhe as vendas em tempo real e realize o sorteio transparente na plataforma.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-black mb-8">Perguntas Frequentes</h2>
+
+            <div class="space-y-4" x-data="{ open: null }">
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 1 ? null : 1" class="w-full p-6 text-left flex items-center justify-between">
+                        <span class="font-bold">O Rifei e confiavel?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 1 }"></i>
+                    </button>
+                    <div x-show="open === 1" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-500">Sim! Utilizamos sistemas de pagamento seguros (Mercado Pago), sorteios transparentes e verificamos a identidade dos criadores.</p>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 2 ? null : 2" class="w-full p-6 text-left flex items-center justify-between">
+                        <span class="font-bold">Como funciona o pagamento?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 2 }"></i>
+                    </button>
+                    <div x-show="open === 2" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-500">Aceitamos Pix e cartao de credito via Mercado Pago. O pagamento e processado instantaneamente e seus numeros sao reservados na hora.</p>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 3 ? null : 3" class="w-full p-6 text-left flex items-center justify-between">
+                        <span class="font-bold">Como e feito o sorteio?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 3 }"></i>
+                    </button>
+                    <div x-show="open === 3" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-500">O sorteio e realizado de forma transparente usando algoritmos aleatorios certificados. O resultado pode ser verificado por todos os participantes.</p>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 4 ? null : 4" class="w-full p-6 text-left flex items-center justify-between">
+                        <span class="font-bold">Quanto custa criar uma rifa?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 4 }"></i>
+                    </button>
+                    <div x-show="open === 4" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-500">Criar uma rifa e gratuito! Cobramos apenas uma pequena taxa sobre as vendas. Com o Rifei Premium, voce pode reduzir ou eliminar essa taxa.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="text-center">
+            <div class="gradient-primary rounded-3xl p-8 md:p-12 text-white">
+                <h2 class="text-2xl md:text-3xl font-black mb-4">Pronto para comecar?</h2>
+                <p class="text-white/80 mb-8 max-w-lg mx-auto">
+                    Crie sua conta gratuita e comece a participar ou criar rifas hoje mesmo!
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/cadastro" class="px-8 py-4 rounded-2xl bg-white text-emerald-600 font-bold hover:bg-gray-100 transition-colors">
+                        Criar Conta Gratis
+                    </a>
+                    <a href="/marketplace" class="px-8 py-4 rounded-2xl bg-white/20 text-white font-bold hover:bg-white/30 transition-colors">
+                        Explorar Rifas
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="py-8 px-4 border-t border-gray-200/50 dark:border-gray-700/50">
+    <div class="max-w-4xl mx-auto text-center text-sm text-gray-500">
+        <p>&copy; 2026 Rifei. Todos os direitos reservados.</p>
+    </div>
+</footer>
+{% endblock %}

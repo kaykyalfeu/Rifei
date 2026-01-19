@@ -1,0 +1,262 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Marketplace{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Layout with Sidebar -->
+<div class="pt-16 lg:pl-64 min-h-screen">
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content -->
+    <main class="p-4 md:p-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-black mb-2">Explorar Rifas</h1>
+            <p class="text-gray-500">Encontre rifas incriveis e concorra a premios</p>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="glass rounded-2xl p-4 mb-8 border border-gray-200/50 dark:border-gray-700/50">
+            <form
+                hx-get="/marketplace"
+                hx-target="#rifas-grid"
+                hx-swap="innerHTML"
+                hx-trigger="change, submit"
+                hx-push-url="true"
+                class="flex flex-wrap gap-4 items-end"
+            >
+                <!-- Search -->
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Buscar</label>
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ filters.search or '' }}"
+                            placeholder="Buscar rifas..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Categoria</label>
+                    <select
+                        name="category"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    >
+                        <option value="">Todas</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {{ 'selected' if filters.category_id == category.id }}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Price Range -->
+                <div class="w-full sm:w-36">
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Preco min.</label>
+                    <input
+                        type="number"
+                        name="min_price"
+                        value="{{ filters.min_price or '' }}"
+                        placeholder="R$ 0"
+                        min="0"
+                        step="0.01"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    >
+                </div>
+
+                <div class="w-full sm:w-36">
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Preco max.</label>
+                    <input
+                        type="number"
+                        name="max_price"
+                        value="{{ filters.max_price or '' }}"
+                        placeholder="R$ 100"
+                        min="0"
+                        step="0.01"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    >
+                </div>
+
+                <!-- Sort -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Ordenar por</label>
+                    <select
+                        name="sort"
+                        class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                    >
+                        <option value="created_at:desc" {{ 'selected' if filters.sort_by == 'created_at' and filters.sort_order == 'desc' }}>Mais recentes</option>
+                        <option value="created_at:asc" {{ 'selected' if filters.sort_by == 'created_at' and filters.sort_order == 'asc' }}>Mais antigas</option>
+                        <option value="price:asc" {{ 'selected' if filters.sort_by == 'price' and filters.sort_order == 'asc' }}>Menor preco</option>
+                        <option value="price:desc" {{ 'selected' if filters.sort_by == 'price' and filters.sort_order == 'desc' }}>Maior preco</option>
+                        <option value="sold_count:desc" {{ 'selected' if filters.sort_by == 'sold_count' and filters.sort_order == 'desc' }}>Mais vendidas</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    class="px-6 py-2.5 rounded-xl gradient-primary text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
+                >
+                    <i data-lucide="filter" class="w-5 h-5 inline-block mr-1"></i>
+                    Filtrar
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Info -->
+        <div class="flex items-center justify-between mb-6">
+            <p class="text-gray-500">
+                <span class="font-bold text-gray-900 dark:text-white">{{ pagination.total }}</span> rifas encontradas
+            </p>
+            {% if filters.search or filters.category_id or filters.min_price or filters.max_price %}
+            <a
+                href="/marketplace"
+                class="text-emerald-600 hover:underline text-sm font-medium flex items-center gap-1"
+            >
+                <i data-lucide="x" class="w-4 h-4"></i>
+                Limpar filtros
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Rifas Grid -->
+        <div id="rifas-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for rifa in rifas %}
+            <article class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all group">
+                <!-- Image -->
+                <div class="aspect-video bg-gradient-to-br from-emerald-400/20 to-violet-400/20 flex items-center justify-center text-6xl relative overflow-hidden">
+                    {% if rifa.image_url %}
+                    <img src="{{ rifa.image_url }}" alt="{{ rifa.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    🎁
+                    {% endif %}
+
+                    {% if rifa.is_featured %}
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold flex items-center gap-1">
+                        <i data-lucide="flame" class="w-3 h-3"></i>
+                        Destaque
+                    </span>
+                    {% endif %}
+
+                    {% if rifa.is_verified %}
+                    <span class="absolute top-3 right-3 px-2 py-1 rounded-full bg-blue-500 text-white text-xs font-bold">
+                        <i data-lucide="badge-check" class="w-3 h-3 inline"></i>
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="p-5">
+                    <!-- Creator -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-white text-sm font-bold">
+                            {% if rifa.creator %}
+                            {{ rifa.creator.name[0] | upper }}
+                            {% else %}
+                            R
+                            {% endif %}
+                        </div>
+                        <span class="font-medium text-sm">
+                            {% if rifa.creator %}{{ rifa.creator.name }}{% else %}Rifei{% endif %}
+                        </span>
+                        {% if rifa.creator and rifa.creator.is_verified %}
+                        <i data-lucide="badge-check" class="w-4 h-4 text-blue-500"></i>
+                        {% endif %}
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="font-bold text-lg mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                        {{ rifa.title }}
+                    </h3>
+
+                    <!-- Category Badge -->
+                    {% if rifa.category %}
+                    <div class="mb-3">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-400">
+                            {{ rifa.category.icon if rifa.category.icon else '📦' }} {{ rifa.category.name }}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Progress -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-500">{{ rifa.sold_count }}/{{ rifa.total_numbers }} numeros</span>
+                            <span class="font-bold text-emerald-600">{{ rifa.progress_percent | round }}%</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full gradient-primary rounded-full transition-all" style="width: {{ rifa.progress_percent }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-black text-emerald-600">R$ {{ "%.2f" | format(rifa.price) }}</p>
+                            <p class="text-xs text-gray-500">por numero</p>
+                        </div>
+                        <a href="/rifa/{{ rifa.slug }}" class="px-5 py-2.5 rounded-xl gradient-primary text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 transition-all">
+                            Participar
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% else %}
+            <div class="col-span-full text-center py-16">
+                <i data-lucide="package-x" class="w-20 h-20 mx-auto text-gray-300 mb-6"></i>
+                <h3 class="text-xl font-bold mb-2">Nenhuma rifa encontrada</h3>
+                <p class="text-gray-500 mb-6">Tente ajustar os filtros ou volte mais tarde</p>
+                <a href="/marketplace" class="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg">
+                    Ver todas as rifas
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.total_pages > 1 %}
+        <div class="mt-8 flex items-center justify-center gap-2">
+            {% if pagination.has_prev %}
+            <a
+                href="?page={{ pagination.page - 1 }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.category_id %}&category={{ filters.category_id }}{% endif %}"
+                class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 transition-colors"
+            >
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </a>
+            {% endif %}
+
+            <div class="flex items-center gap-1">
+                {% for p in range(1, pagination.total_pages + 1) %}
+                {% if p == pagination.page %}
+                <span class="w-10 h-10 rounded-xl gradient-primary text-white font-bold flex items-center justify-center">{{ p }}</span>
+                {% elif p == 1 or p == pagination.total_pages or (p >= pagination.page - 2 and p <= pagination.page + 2) %}
+                <a
+                    href="?page={{ p }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.category_id %}&category={{ filters.category_id }}{% endif %}"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 font-medium flex items-center justify-center hover:border-emerald-500 transition-colors"
+                >{{ p }}</a>
+                {% elif p == 2 or p == pagination.total_pages - 1 %}
+                <span class="px-2 text-gray-400">...</span>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if pagination.has_next %}
+            <a
+                href="?page={{ pagination.page + 1 }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.category_id %}&category={{ filters.category_id }}{% endif %}"
+                class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 transition-colors"
+            >
+                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

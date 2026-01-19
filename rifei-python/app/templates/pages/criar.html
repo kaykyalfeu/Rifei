@@ -1,0 +1,271 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Criar Rifa{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Layout with Sidebar -->
+<div class="pt-16 lg:pl-64 min-h-screen">
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content -->
+    <main class="p-4 md:p-8 max-w-4xl">
+        <h1 class="text-3xl md:text-4xl font-black mb-2">Criar Nova Rifa</h1>
+        <p class="text-gray-500 mb-8">Preencha os dados abaixo para criar sua rifa</p>
+
+        <form
+            action="/marketplace/api/rifas"
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-8"
+        >
+            <!-- Basic Info -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <i data-lucide="info" class="w-5 h-5 text-emerald-600"></i>
+                    Informacoes Basicas
+                </h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Titulo da Rifa *
+                        </label>
+                        <input
+                            type="text"
+                            name="title"
+                            required
+                            maxlength="100"
+                            placeholder="Ex: iPhone 15 Pro Max 256GB"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Slug (URL amigavel) *
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500">rifei.com/rifa/</span>
+                            <input
+                                type="text"
+                                name="slug"
+                                required
+                                maxlength="100"
+                                placeholder="iphone-15-pro-max"
+                                pattern="[a-z0-9-]+"
+                                class="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                            >
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Use apenas letras minusculas, numeros e hifens</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Descricao *
+                        </label>
+                        <textarea
+                            name="description"
+                            required
+                            rows="4"
+                            maxlength="2000"
+                            placeholder="Descreva o premio da sua rifa em detalhes..."
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none"
+                        ></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Categoria *
+                        </label>
+                        <select
+                            name="category_id"
+                            required
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                            <option value="">Selecione uma categoria</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.icon }} {{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5 text-emerald-600"></i>
+                    Imagem do Premio
+                </h2>
+
+                <div
+                    x-data="{ dragover: false, preview: null }"
+                    class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center transition-colors"
+                    :class="{ 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20': dragover }"
+                    @dragover.prevent="dragover = true"
+                    @dragleave="dragover = false"
+                    @drop.prevent="dragover = false; preview = URL.createObjectURL($event.dataTransfer.files[0]); $refs.fileInput.files = $event.dataTransfer.files"
+                >
+                    <template x-if="!preview">
+                        <div>
+                            <i data-lucide="upload-cloud" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 dark:text-gray-400 mb-2">Arraste uma imagem ou clique para selecionar</p>
+                            <p class="text-sm text-gray-500">PNG, JPG ou GIF. Max 5MB.</p>
+                        </div>
+                    </template>
+                    <template x-if="preview">
+                        <div>
+                            <img :src="preview" class="max-h-64 mx-auto rounded-xl mb-4">
+                            <button type="button" @click="preview = null; $refs.fileInput.value = ''" class="text-red-500 hover:underline">
+                                Remover imagem
+                            </button>
+                        </div>
+                    </template>
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        x-ref="fileInput"
+                        @change="preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                        class="absolute inset-0 opacity-0 cursor-pointer"
+                    >
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <i data-lucide="wallet" class="w-5 h-5 text-emerald-600"></i>
+                    Precos e Numeros
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Preco por numero (R$) *
+                        </label>
+                        <input
+                            type="number"
+                            name="price"
+                            required
+                            min="0.50"
+                            max="1000"
+                            step="0.01"
+                            placeholder="5.00"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Total de numeros *
+                        </label>
+                        <select
+                            name="total_numbers"
+                            required
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                            <option value="50">50 numeros</option>
+                            <option value="100" selected>100 numeros</option>
+                            <option value="200">200 numeros</option>
+                            <option value="500">500 numeros</option>
+                            <option value="1000">1.000 numeros</option>
+                            <option value="5000">5.000 numeros</option>
+                            <option value="10000">10.000 numeros</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Minimo por compra
+                        </label>
+                        <input
+                            type="number"
+                            name="min_numbers"
+                            min="1"
+                            value="1"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Maximo por pessoa
+                        </label>
+                        <input
+                            type="number"
+                            name="max_numbers_per_user"
+                            min="1"
+                            value="10"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-6">
+                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
+                    Datas
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Data de inicio
+                        </label>
+                        <input
+                            type="datetime-local"
+                            name="start_date"
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Data de encerramento *
+                        </label>
+                        <input
+                            type="datetime-local"
+                            name="end_date"
+                            required
+                            class="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-end">
+                <button
+                    type="button"
+                    onclick="history.back()"
+                    class="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold hover:border-gray-400 transition-colors"
+                >
+                    Cancelar
+                </button>
+                <button
+                    type="submit"
+                    name="action"
+                    value="draft"
+                    class="px-6 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Salvar Rascunho
+                </button>
+                <button
+                    type="submit"
+                    name="action"
+                    value="publish"
+                    class="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
+                >
+                    Publicar Rifa
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Rifei Premium{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-5xl mx-auto">
+        <!-- Hero -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400/20 to-orange-500/20 text-orange-600 mb-6">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span class="text-sm font-bold">RIFEI PREMIUM</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black mb-6">
+                Leve suas rifas para o
+                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">proximo nivel</span>
+            </h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">
+                Remova taxas, desbloqueie recursos exclusivos e destaque suas rifas no marketplace.
+            </p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
+            <!-- Free Plan -->
+            <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 p-8">
+                <h3 class="text-xl font-bold mb-2">Gratuito</h3>
+                <p class="text-gray-500 mb-6">Para quem esta comecando</p>
+                <div class="mb-6">
+                    <span class="text-4xl font-black">R$ 0</span>
+                    <span class="text-gray-500">/mes</span>
+                </div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Criar rifas ilimitadas</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Participar de rifas</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Pagamentos via Pix</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-gray-400">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                        <span>Taxa de 5% sobre vendas</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-gray-400">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                        <span>Sem destaque no marketplace</span>
+                    </li>
+                </ul>
+                <button class="w-full py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold hover:border-gray-400 transition-colors">
+                    Plano Atual
+                </button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="relative glass rounded-3xl border-2 border-orange-500 p-8">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-sm font-bold">
+                    MAIS POPULAR
+                </div>
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    Premium
+                    <i data-lucide="zap" class="w-5 h-5 text-orange-500"></i>
+                </h3>
+                <p class="text-gray-500 mb-6">Para criadores serios</p>
+                <div class="mb-6">
+                    <span class="text-4xl font-black">R$ 29</span>
+                    <span class="text-gray-500">/mes</span>
+                </div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Tudo do plano gratuito</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span class="font-bold text-emerald-600">Taxa reduzida para 2%</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Destaque no marketplace</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Badge de verificado</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Suporte prioritario</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-500"></i>
+                        <span>Analytics avancado</span>
+                    </li>
+                </ul>
+                <button class="w-full py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold hover:opacity-90 transition-opacity">
+                    Assinar Premium
+                </button>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-black text-center mb-12">Recursos Premium</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="percent" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Taxa Reduzida</h3>
+                    <p class="text-gray-500">Pague apenas 2% de taxa sobre suas vendas, economize mais.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="star" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Destaque</h3>
+                    <p class="text-gray-500">Suas rifas aparecem em posicoes privilegiadas no marketplace.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="badge-check" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Verificado</h3>
+                    <p class="text-gray-500">Badge de criador verificado para maior credibilidade.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="headphones" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Suporte VIP</h3>
+                    <p class="text-gray-500">Atendimento prioritario com tempo de resposta reduzido.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="bar-chart-3" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Analytics</h3>
+                    <p class="text-gray-500">Metricas detalhadas sobre suas rifas e compradores.</p>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center">
+                        <i data-lucide="gift" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Bonus</h3>
+                    <p class="text-gray-500">Acesso antecipado a novos recursos e promocoes exclusivas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section>
+            <h2 class="text-2xl font-black text-center mb-8">Perguntas sobre o Premium</h2>
+            <div class="max-w-2xl mx-auto space-y-4" x-data="{ open: null }">
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 1 ? null : 1" class="w-full p-5 text-left flex items-center justify-between">
+                        <span class="font-medium">Posso cancelar a qualquer momento?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 1 }"></i>
+                    </button>
+                    <div x-show="open === 1" x-collapse class="px-5 pb-5">
+                        <p class="text-gray-500">Sim! Voce pode cancelar sua assinatura a qualquer momento. O acesso Premium continua ate o fim do periodo pago.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                    <button @click="open = open === 2 ? null : 2" class="w-full p-5 text-left flex items-center justify-between">
+                        <span class="font-medium">A taxa reduzida vale para rifas ja criadas?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 2 }"></i>
+                    </button>
+                    <div x-show="open === 2" x-collapse class="px-5 pb-5">
+                        <p class="text-gray-500">Sim! A taxa de 2% se aplica a todas as suas vendas enquanto voce for Premium, incluindo rifas criadas anteriormente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}
