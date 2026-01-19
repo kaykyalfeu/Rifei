@@ -1,0 +1,261 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Layout with Sidebar -->
+<div class="pt-16 lg:pl-64 min-h-screen">
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content -->
+    <main class="p-4 md:p-8">
+        <!-- Profile Header -->
+        <div class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-8">
+            <!-- Cover -->
+            <div class="h-32 md:h-48 bg-gradient-to-r from-emerald-400 via-violet-500 to-purple-600 relative">
+                <div class="absolute inset-0 bg-black/10"></div>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="px-6 pb-6">
+                <div class="flex flex-col md:flex-row md:items-end gap-4 -mt-16 md:-mt-12">
+                    <!-- Avatar -->
+                    <div class="w-32 h-32 rounded-3xl gradient-primary flex items-center justify-center text-white text-5xl font-bold shadow-xl shadow-emerald-500/30 border-4 border-white dark:border-gray-900">
+                        {{ user.name[0] | upper }}
+                    </div>
+
+                    <div class="flex-1 md:pb-2">
+                        <div class="flex items-center gap-3 mb-1">
+                            <h1 class="text-2xl md:text-3xl font-black">{{ user.name }}</h1>
+                            {% if user.is_verified %}
+                            <i data-lucide="badge-check" class="w-6 h-6 text-blue-500"></i>
+                            {% endif %}
+                        </div>
+                        <p class="text-gray-500">@{{ user.username }}</p>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <a href="/configuracoes" class="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold hover:border-emerald-500 transition-colors flex items-center gap-2">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            Editar Perfil
+                        </a>
+                    </div>
+                </div>
+
+                {% if user.bio %}
+                <p class="mt-6 text-gray-600 dark:text-gray-400 max-w-2xl">{{ user.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                    <i data-lucide="trophy" class="w-6 h-6 text-emerald-600"></i>
+                </div>
+                <p class="text-3xl font-black text-emerald-600">{{ user.total_wins or 0 }}</p>
+                <p class="text-sm text-gray-500">Vitorias</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-violet-500/10 flex items-center justify-center">
+                    <i data-lucide="ticket" class="w-6 h-6 text-violet-600"></i>
+                </div>
+                <p class="text-3xl font-black text-violet-600">{{ participations_count or 0 }}</p>
+                <p class="text-sm text-gray-500">Participacoes</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                    <i data-lucide="package" class="w-6 h-6 text-blue-600"></i>
+                </div>
+                <p class="text-3xl font-black text-blue-600">{{ created_rifas | length }}</p>
+                <p class="text-sm text-gray-500">Rifas Criadas</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                    <i data-lucide="star" class="w-6 h-6 text-yellow-600"></i>
+                </div>
+                <p class="text-3xl font-black text-yellow-600">{{ user.level or 1 }}</p>
+                <p class="text-sm text-gray-500">Nivel</p>
+            </div>
+        </div>
+
+        <!-- Level Progress -->
+        <div class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-bold text-lg">Progresso do Nivel</h2>
+                <span class="text-sm text-gray-500">{{ user.xp or 0 }} XP</span>
+            </div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-full gradient-primary rounded-full transition-all" style="width: {{ ((user.xp or 0) % 1000) / 10 }}%"></div>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">{{ 1000 - ((user.xp or 0) % 1000) }} XP para o nivel {{ (user.level or 1) + 1 }}</p>
+        </div>
+
+        <!-- Tabs -->
+        <div x-data="{ activeTab: 'participations' }" class="glass rounded-3xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+            <!-- Tab Headers -->
+            <div class="flex border-b border-gray-200/50 dark:border-gray-700/50">
+                <button
+                    @click="activeTab = 'participations'"
+                    :class="activeTab === 'participations' ? 'border-b-2 border-emerald-500 text-emerald-600' : 'text-gray-500'"
+                    class="flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="ticket" class="w-5 h-5"></i>
+                    Participacoes
+                </button>
+                <button
+                    @click="activeTab = 'created'"
+                    :class="activeTab === 'created' ? 'border-b-2 border-emerald-500 text-emerald-600' : 'text-gray-500'"
+                    class="flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                    Minhas Rifas
+                </button>
+                <button
+                    @click="activeTab = 'achievements'"
+                    :class="activeTab === 'achievements' ? 'border-b-2 border-emerald-500 text-emerald-600' : 'text-gray-500'"
+                    class="flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                    Conquistas
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- Participations Tab -->
+                <div x-show="activeTab === 'participations'">
+                    {% if participated_rifas %}
+                    <div class="grid md:grid-cols-2 gap-4">
+                        {% for rifa in participated_rifas %}
+                        <a href="/rifa/{{ rifa.slug }}" class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-400/20 to-violet-400/20 flex items-center justify-center text-2xl flex-shrink-0">
+                                {% if rifa.image_url %}
+                                <img src="{{ rifa.image_url }}" class="w-full h-full object-cover rounded-xl">
+                                {% else %}
+                                🎁
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold truncate">{{ rifa.title }}</h3>
+                                <p class="text-sm text-gray-500">{{ rifa.sold_count }}/{{ rifa.total_numbers }} numeros</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium
+                                    {% if rifa.status.value == 'active' %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400
+                                    {% elif rifa.status.value == 'completed' %}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
+                                    {% else %}bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400{% endif %}">
+                                    {{ rifa.status.value | capitalize }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-12">
+                        <i data-lucide="ticket" class="w-16 h-16 mx-auto text-gray-300 mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Nenhuma participacao ainda</h3>
+                        <p class="text-gray-500 mb-6">Explore o marketplace e participe de rifas incriveis!</p>
+                        <a href="/marketplace" class="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg">
+                            Explorar Rifas
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Created Rifas Tab -->
+                <div x-show="activeTab === 'created'" x-cloak>
+                    {% if created_rifas %}
+                    <div class="grid md:grid-cols-2 gap-4">
+                        {% for rifa in created_rifas %}
+                        <a href="/rifa/{{ rifa.slug }}" class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-400/20 to-violet-400/20 flex items-center justify-center text-2xl flex-shrink-0">
+                                {% if rifa.image_url %}
+                                <img src="{{ rifa.image_url }}" class="w-full h-full object-cover rounded-xl">
+                                {% else %}
+                                🎁
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold truncate">{{ rifa.title }}</h3>
+                                <div class="flex items-center gap-2 text-sm text-gray-500">
+                                    <span>{{ rifa.sold_count }}/{{ rifa.total_numbers }}</span>
+                                    <span>•</span>
+                                    <span>R$ {{ "%.2f" | format(rifa.price * rifa.sold_count) }}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium
+                                    {% if rifa.status.value == 'active' %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400
+                                    {% elif rifa.status.value == 'completed' %}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
+                                    {% else %}bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400{% endif %}">
+                                    {{ rifa.status.value | capitalize }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-12">
+                        <i data-lucide="package" class="w-16 h-16 mx-auto text-gray-300 mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Nenhuma rifa criada</h3>
+                        <p class="text-gray-500 mb-6">Crie sua primeira rifa e comece a vender!</p>
+                        <a href="/criar" class="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg">
+                            Criar Rifa
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Achievements Tab -->
+                <div x-show="activeTab === 'achievements'" x-cloak>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- First Purchase -->
+                        <div class="rounded-2xl p-6 text-center {{ 'bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-500' if participations_count > 0 else 'bg-gray-50 dark:bg-gray-800/50 opacity-50' }}">
+                            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl {{ 'bg-emerald-500' if participations_count > 0 else 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center">
+                                <i data-lucide="shopping-cart" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="font-bold">Primeira Compra</h4>
+                            <p class="text-xs text-gray-500 mt-1">Participou de uma rifa</p>
+                        </div>
+
+                        <!-- First Rifa Created -->
+                        <div class="rounded-2xl p-6 text-center {{ 'bg-violet-50 dark:bg-violet-900/20 border-2 border-violet-500' if created_rifas else 'bg-gray-50 dark:bg-gray-800/50 opacity-50' }}">
+                            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl {{ 'bg-violet-500' if created_rifas else 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center">
+                                <i data-lucide="plus-circle" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="font-bold">Criador</h4>
+                            <p class="text-xs text-gray-500 mt-1">Criou sua primeira rifa</p>
+                        </div>
+
+                        <!-- Winner -->
+                        <div class="rounded-2xl p-6 text-center {{ 'bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-500' if user.total_wins > 0 else 'bg-gray-50 dark:bg-gray-800/50 opacity-50' }}">
+                            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl {{ 'bg-yellow-500' if user.total_wins > 0 else 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center">
+                                <i data-lucide="trophy" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="font-bold">Sortudo</h4>
+                            <p class="text-xs text-gray-500 mt-1">Ganhou uma rifa</p>
+                        </div>
+
+                        <!-- Verified -->
+                        <div class="rounded-2xl p-6 text-center {{ 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500' if user.is_verified else 'bg-gray-50 dark:bg-gray-800/50 opacity-50' }}">
+                            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl {{ 'bg-blue-500' if user.is_verified else 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center">
+                                <i data-lucide="badge-check" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="font-bold">Verificado</h4>
+                            <p class="text-xs text-gray-500 mt-1">Conta verificada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

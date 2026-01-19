@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.models import User, UserRole
-from app.services.auth import decode_token, get_user_by_id
+from app.services.auth import verify_token, get_user_by_id
 
 
 # ===========================================
@@ -58,26 +58,44 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # 4. Decodificar token
-    token_data = decode_token(token)
-    
-    if not token_data or not token_data.user_id:
+    # 4. Verificar token (DEVE ser do tipo "access", não "refresh")
+    payload = verify_token(token, token_type="access")
+
+    if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido ou expirado",
+            detail="Token inválido, expirado ou tipo incorreto",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    # 5. Buscar usuário no banco
-    user = await get_user_by_id(db, token_data.user_id)
-    
+
+    # 5. Extrair user_id do payload
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido: usuário não identificado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        user_id = int(user_id_str)
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido: ID de usuário malformado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # 6. Buscar usuário no banco
+    user = await get_user_by_id(db, user_id)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Usuário não encontrado",
         )
-    
-    # 6. Verificar se usuário está ativo
+
+    # 7. Verificar se usuário está ativo
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -127,19 +145,29 @@ async def get_optional_user(
     # Sem token = usuário não logado (mas não é erro)
     if not token:
         return None
-    
-    # Tentar decodificar
-    token_data = decode_token(token)
-    
-    if not token_data or not token_data.user_id:
+
+    # Verificar token (DEVE ser do tipo "access", não "refresh")
+    payload = verify_token(token, token_type="access")
+
+    if not payload:
         return None
-    
+
+    # Extrair user_id do payload
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        return None
+
+    try:
+        user_id = int(user_id_str)
+    except (ValueError, TypeError):
+        return None
+
     # Buscar usuário
-    user = await get_user_by_id(db, token_data.user_id)
-    
+    user = await get_user_by_id(db, user_id)
+
     if not user or not user.is_active:
         return None
-    
+
     return user
 
 

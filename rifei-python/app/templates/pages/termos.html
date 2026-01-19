@@ -1,0 +1,107 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Termos de Uso{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-black mb-6">Termos de Uso</h1>
+        <p class="text-gray-500 mb-8">Ultima atualizacao: Janeiro de 2026</p>
+
+        <div class="prose prose-emerald dark:prose-invert max-w-none">
+            <div class="glass rounded-2xl p-6 md:p-8 border border-gray-200/50 dark:border-gray-700/50 space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4">1. Aceitacao dos Termos</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Ao acessar e usar a plataforma Rifei, voce concorda em cumprir e estar vinculado a estes Termos de Uso. Se voce nao concordar com qualquer parte destes termos, nao devera usar nossos servicos.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">2. Descricao do Servico</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        O Rifei e uma plataforma online que permite a criacao e participacao em rifas e sorteios. Conectamos organizadores de rifas com participantes interessados em concorrer a premios.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">3. Elegibilidade</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Para usar o Rifei, voce deve ter pelo menos 18 anos de idade e capacidade legal para celebrar contratos vinculativos. Ao usar nossos servicos, voce declara e garante que atende a esses requisitos.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">4. Conta de Usuario</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Voce e responsavel por manter a confidencialidade de sua conta e senha. Voce concorda em:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>Fornecer informacoes verdadeiras e precisas</li>
+                        <li>Manter suas informacoes atualizadas</li>
+                        <li>Nao compartilhar sua conta com terceiros</li>
+                        <li>Notificar-nos imediatamente sobre uso nao autorizado</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">5. Regras para Criadores de Rifas</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Ao criar uma rifa no Rifei, voce concorda em:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>Oferecer apenas premios legitimos e de sua propriedade</li>
+                        <li>Cumprir todas as leis e regulamentos aplicaveis</li>
+                        <li>Entregar o premio ao ganhador conforme descrito</li>
+                        <li>Nao criar rifas fraudulentas ou enganosas</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">6. Regras para Participantes</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Ao participar de uma rifa, voce entende e concorda que:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>A compra de numeros nao garante ganho do premio</li>
+                        <li>Os resultados sao determinados por sorteio aleatorio</li>
+                        <li>Compras nao sao reembolsaveis apos confirmacao</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">7. Pagamentos e Taxas</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        O Rifei cobra uma taxa sobre as vendas de cada rifa. Os valores arrecadados, menos as taxas aplicaveis, serao repassados ao criador da rifa apos a conclusao do sorteio.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">8. Limitacao de Responsabilidade</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        O Rifei atua apenas como intermediario entre criadores e participantes. Nao nos responsabilizamos pela entrega de premios ou disputas entre usuarios, embora nos esforcemos para mediar conflitos.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">9. Modificacoes dos Termos</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Reservamo-nos o direito de modificar estes termos a qualquer momento. Alteracoes significativas serao comunicadas por email ou notificacao na plataforma.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">10. Contato</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Para duvidas sobre estes Termos de Uso, entre em contato conosco em <a href="mailto:suporte@rifei.com" class="text-emerald-600 hover:underline">suporte@rifei.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

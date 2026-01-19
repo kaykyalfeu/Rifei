@@ -1,0 +1,116 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Politica de Privacidade{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-black mb-6">Politica de Privacidade</h1>
+        <p class="text-gray-500 mb-8">Ultima atualizacao: Janeiro de 2026</p>
+
+        <div class="prose prose-emerald dark:prose-invert max-w-none">
+            <div class="glass rounded-2xl p-6 md:p-8 border border-gray-200/50 dark:border-gray-700/50 space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4">1. Introducao</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        O Rifei valoriza sua privacidade. Esta Politica de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informacoes pessoais quando voce usa nossa plataforma.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">2. Informacoes que Coletamos</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Coletamos os seguintes tipos de informacoes:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li><strong>Dados de cadastro:</strong> nome, email, telefone, username</li>
+                        <li><strong>Dados de pagamento:</strong> processados de forma segura pelo Mercado Pago</li>
+                        <li><strong>Dados de uso:</strong> interacoes com a plataforma, rifas participadas</li>
+                        <li><strong>Dados tecnicos:</strong> IP, tipo de dispositivo, navegador</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">3. Como Usamos suas Informacoes</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Utilizamos suas informacoes para:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>Fornecer e melhorar nossos servicos</li>
+                        <li>Processar transacoes e pagamentos</li>
+                        <li>Enviar comunicacoes sobre suas rifas e conta</li>
+                        <li>Prevenir fraudes e garantir seguranca</li>
+                        <li>Cumprir obrigacoes legais</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">4. Compartilhamento de Dados</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Podemos compartilhar suas informacoes com:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>Processadores de pagamento (Mercado Pago)</li>
+                        <li>Criadores de rifas (apenas dados necessarios)</li>
+                        <li>Autoridades legais (quando exigido por lei)</li>
+                        <li>Prestadores de servico que nos auxiliam</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">5. Seguranca dos Dados</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Implementamos medidas de seguranca tecnicas e organizacionais para proteger suas informacoes, incluindo criptografia, firewalls e controles de acesso. No entanto, nenhum sistema e 100% seguro.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">6. Seus Direitos</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        De acordo com a LGPD, voce tem direito a:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                        <li>Acessar seus dados pessoais</li>
+                        <li>Corrigir dados incorretos</li>
+                        <li>Solicitar exclusao de dados</li>
+                        <li>Revogar consentimento</li>
+                        <li>Portabilidade dos dados</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">7. Cookies</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Utilizamos cookies e tecnologias similares para melhorar sua experiencia, lembrar preferencias e analisar o uso da plataforma. Voce pode gerenciar suas preferencias de cookies nas configuracoes do navegador.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">8. Retencao de Dados</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Mantemos suas informacoes pelo tempo necessario para fornecer nossos servicos e cumprir obrigacoes legais. Dados de transacoes podem ser mantidos por periodos mais longos conforme exigido por lei.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">9. Alteracoes nesta Politica</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Podemos atualizar esta politica periodicamente. Alteracoes significativas serao notificadas por email ou aviso na plataforma. Recomendamos revisar esta pagina regularmente.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4">10. Contato</h2>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Para exercer seus direitos ou tirar duvidas sobre privacidade, entre em contato com nosso Encarregado de Protecao de Dados em <a href="mailto:privacidade@rifei.com" class="text-emerald-600 hover:underline">privacidade@rifei.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

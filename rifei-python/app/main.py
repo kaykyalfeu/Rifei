@@ -6,15 +6,18 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
-from app.database import init_db, close_db
-from app.dependencies import get_optional_user, OptionalUser
-from app.models.models import User
+from app.database import init_db, close_db, get_db
+from app.dependencies import get_optional_user, OptionalUser, get_current_user, CurrentUser
+from app.models.models import User, RifaStatus
+from app.services import marketplace as marketplace_service
+from app.schemas.marketplace import RifaFilters
 
 # Importar routers
 from app.routers import auth, marketplace
@@ -189,102 +192,397 @@ async def health_check():
 
 
 # ===========================================
-# ROTAS PLACEHOLDER (para links funcionarem)
+# ROTAS PRINCIPAIS DO MARKETPLACE
 # ===========================================
 
 @app.get("/marketplace", response_class=HTMLResponse)
-async def marketplace(request: Request, user: OptionalUser):
-    """Página do marketplace (placeholder)"""
+async def marketplace_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+    search: Optional[str] = Query(None),
+    category: Optional[int] = Query(None),
+    min_price: Optional[float] = Query(None),
+    max_price: Optional[float] = Query(None),
+    sort: Optional[str] = Query("created_at:desc"),
+    page: int = Query(1, ge=1),
+):
+    """Página do marketplace com rifas reais"""
+    # Parse sort parameter
+    sort_by, sort_order = sort.split(":") if ":" in sort else ("created_at", "desc")
+
+    # Build filters
+    filters = RifaFilters(
+        search=search,
+        category_id=category,
+        min_price=min_price,
+        max_price=max_price,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        page=page,
+        per_page=12,
+        status=RifaStatus.ACTIVE,
+    )
+
+    # Get rifas and categories from database
+    rifas, total = await marketplace_service.list_rifas(db, filters)
+    categories = await marketplace_service.list_categories(db)
+
+    # Build pagination info
+    total_pages = (total + filters.per_page - 1) // filters.per_page
+    pagination = {
+        "total": total,
+        "page": page,
+        "per_page": filters.per_page,
+        "total_pages": total_pages,
+        "has_prev": page > 1,
+        "has_next": page < total_pages,
+    }
+
     return templates.TemplateResponse(
-        "pages/home.html",  # Temporariamente usa home
+        "pages/marketplace.html",
         {
             "request": request,
             "user": user,
-            "categories": MOCK_CATEGORIES,
-            "featured_rifas": MOCK_RIFAS,
+            "rifas": rifas,
+            "categories": categories,
+            "filters": filters,
+            "pagination": pagination,
         }
     )
 
 
 @app.get("/rifa/{slug}", response_class=HTMLResponse)
-async def rifa_detail(request: Request, slug: str, user: OptionalUser):
-    """Página de detalhe da rifa (placeholder)"""
-    rifa = next((r for r in MOCK_RIFAS if r["slug"] == slug), None)
+async def rifa_detail_page(
+    request: Request,
+    slug: str,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página de detalhe da rifa"""
+    # Get rifa by slug
+    rifa = await marketplace_service.get_rifa_by_slug(db, slug, increment_view=True)
+
     if not rifa:
-        rifa = MOCK_RIFAS[0]  # Fallback
-    
+        return RedirectResponse(url="/marketplace")
+
+    # Get available numbers
+    available_numbers = await marketplace_service.get_available_numbers(db, rifa.id)
+
+    # Get categories for sidebar
+    categories = await marketplace_service.list_categories(db)
+
     return templates.TemplateResponse(
-        "pages/home.html",  # Temporariamente usa home
+        "pages/rifa_detail.html",
         {
             "request": request,
             "user": user,
-            "categories": MOCK_CATEGORIES,
-            "featured_rifas": [rifa],
+            "rifa": rifa,
+            "available_numbers": available_numbers,
+            "categories": categories,
         }
     )
 
 
 @app.get("/perfil", response_class=HTMLResponse)
-async def perfil(request: Request, user: OptionalUser):
-    """Página de perfil (placeholder)"""
+async def perfil_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página de perfil do usuário"""
     if not user:
         return RedirectResponse(url="/login?next=/perfil")
-    
+
+    # Get user's created rifas
+    created_rifas = await marketplace_service.get_rifas_by_creator(db, user.id)
+
+    # Get categories for sidebar
+    categories = await marketplace_service.list_categories(db)
+
+    # Get participations (rifas where user bought tickets)
+    # For now, we'll pass empty lists - this will be implemented with tickets service
+    participated_rifas = []
+    participations_count = 0
+
     return templates.TemplateResponse(
-        "pages/home.html",
+        "pages/perfil.html",
         {
             "request": request,
             "user": user,
-            "categories": MOCK_CATEGORIES,
-            "featured_rifas": [],
+            "created_rifas": created_rifas,
+            "participated_rifas": participated_rifas,
+            "participations_count": participations_count,
+            "categories": categories,
         }
     )
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, user: OptionalUser):
-    """Página de dashboard (placeholder)"""
+async def dashboard_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página de dashboard do usuário"""
     if not user:
         return RedirectResponse(url="/login?next=/dashboard")
-    
+
+    # Get user's rifas
+    my_rifas = await marketplace_service.get_rifas_by_creator(db, user.id)
+
+    # Get categories for sidebar
+    categories = await marketplace_service.list_categories(db)
+
+    # Calculate stats
+    total_tickets_sold = sum(r.sold_count for r in my_rifas)
+    total_revenue = sum(float(r.price) * r.sold_count for r in my_rifas)
+    active_rifas = [r for r in my_rifas if r.status == RifaStatus.ACTIVE]
+
+    stats = {
+        "total_rifas": len(my_rifas),
+        "active_rifas": len(active_rifas),
+        "total_tickets_sold": total_tickets_sold,
+        "total_revenue": total_revenue,
+    }
+
+    # Participations placeholder
+    participations = []
+
     return templates.TemplateResponse(
-        "pages/home.html",
+        "pages/dashboard.html",
         {
             "request": request,
             "user": user,
-            "categories": MOCK_CATEGORIES,
-            "featured_rifas": [],
+            "my_rifas": my_rifas,
+            "stats": stats,
+            "participations": participations,
+            "categories": categories,
         }
     )
 
 
 @app.get("/configuracoes", response_class=HTMLResponse)
-async def configuracoes(request: Request, user: OptionalUser):
-    """Página de configurações (placeholder)"""
+async def configuracoes_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página de configurações"""
     if not user:
         return RedirectResponse(url="/login?next=/configuracoes")
-    
+
+    categories = await marketplace_service.list_categories(db)
+
     return templates.TemplateResponse(
-        "pages/home.html",
+        "pages/configuracoes.html",
         {
             "request": request,
             "user": user,
-            "categories": MOCK_CATEGORIES,
-            "featured_rifas": [],
+            "categories": categories,
         }
     )
 
 
 @app.get("/categoria/{slug}", response_class=HTMLResponse)
-async def categoria(request: Request, slug: str, user: OptionalUser):
-    """Página de categoria (placeholder)"""
+async def categoria_page(
+    request: Request,
+    slug: str,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+    search: Optional[str] = Query(None),
+    sort: Optional[str] = Query("created_at:desc"),
+    page: int = Query(1, ge=1),
+):
+    """Página de categoria"""
+    # Get category
+    category = await marketplace_service.get_category_by_slug(db, slug)
+
+    if not category:
+        return RedirectResponse(url="/marketplace")
+
+    # Parse sort
+    sort_by, sort_order = sort.split(":") if ":" in sort else ("created_at", "desc")
+
+    # Build filters
+    filters = RifaFilters(
+        search=search,
+        category_id=category.id,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        page=page,
+        per_page=12,
+        status=RifaStatus.ACTIVE,
+    )
+
+    # Get rifas
+    rifas, total = await marketplace_service.list_rifas(db, filters)
+
+    # Get all categories for sidebar
+    categories = await marketplace_service.list_categories(db)
+
+    # Pagination
+    total_pages = (total + filters.per_page - 1) // filters.per_page
+    pagination = {
+        "total": total,
+        "page": page,
+        "per_page": filters.per_page,
+        "total_pages": total_pages,
+        "has_prev": page > 1,
+        "has_next": page < total_pages,
+    }
+
     return templates.TemplateResponse(
-        "pages/home.html",
+        "pages/categoria.html",
+        {
+            "request": request,
+            "user": user,
+            "category": category,
+            "rifas": rifas,
+            "categories": categories,
+            "pagination": pagination,
+        }
+    )
+
+
+# ===========================================
+# ROTAS ADICIONAIS (evitar 404 no menu/footer)
+# ===========================================
+
+@app.get("/criar", response_class=HTMLResponse)
+async def criar_rifa_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página para criar nova rifa"""
+    if not user:
+        return RedirectResponse(url="/login?next=/criar")
+
+    categories = await marketplace_service.list_categories(db)
+
+    return templates.TemplateResponse(
+        "pages/criar.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": categories,
+        }
+    )
+
+
+@app.get("/feed", response_class=HTMLResponse)
+async def feed_page(
+    request: Request,
+    user: OptionalUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Página de feed social"""
+    categories = await marketplace_service.list_categories(db)
+
+    return templates.TemplateResponse(
+        "pages/feed.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": categories,
+            "feed_posts": [],  # Will be populated later
+        }
+    )
+
+
+@app.get("/como-funciona", response_class=HTMLResponse)
+async def como_funciona_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página Como Funciona"""
+    return templates.TemplateResponse(
+        "pages/como-funciona.html",
         {
             "request": request,
             "user": user,
             "categories": MOCK_CATEGORIES,
-            "featured_rifas": MOCK_RIFAS,
+        }
+    )
+
+
+@app.get("/ajuda", response_class=HTMLResponse)
+async def ajuda_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página de Ajuda/FAQ"""
+    return templates.TemplateResponse(
+        "pages/ajuda.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": MOCK_CATEGORIES,
+        }
+    )
+
+
+@app.get("/contato", response_class=HTMLResponse)
+async def contato_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página de Contato"""
+    return templates.TemplateResponse(
+        "pages/contato.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": MOCK_CATEGORIES,
+        }
+    )
+
+
+@app.get("/premium", response_class=HTMLResponse)
+async def premium_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página do Rifei Premium"""
+    return templates.TemplateResponse(
+        "pages/premium.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": MOCK_CATEGORIES,
+        }
+    )
+
+
+@app.get("/termos", response_class=HTMLResponse)
+async def termos_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página de Termos de Uso"""
+    return templates.TemplateResponse(
+        "pages/termos.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": MOCK_CATEGORIES,
+        }
+    )
+
+
+@app.get("/privacidade", response_class=HTMLResponse)
+async def privacidade_page(
+    request: Request,
+    user: OptionalUser,
+):
+    """Página de Política de Privacidade"""
+    return templates.TemplateResponse(
+        "pages/privacidade.html",
+        {
+            "request": request,
+            "user": user,
+            "categories": MOCK_CATEGORIES,
         }
     )
 

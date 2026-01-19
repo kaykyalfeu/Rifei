@@ -1,0 +1,168 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Central de Ajuda{% endblock %}
+
+{% block content %}
+<!-- Header -->
+{% include "components/header.html" %}
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Hero -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black mb-6">Central de <span class="text-gradient">Ajuda</span></h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">
+                Encontre respostas para suas duvidas ou entre em contato conosco.
+            </p>
+        </div>
+
+        <!-- Search -->
+        <div class="max-w-xl mx-auto mb-12">
+            <div class="relative">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                <input
+                    type="text"
+                    placeholder="Buscar na central de ajuda..."
+                    class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg"
+                >
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <a href="#participar" class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center hover:border-emerald-500 transition-colors group">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+                    <i data-lucide="ticket" class="w-8 h-8 text-emerald-600"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Participar de Rifas</h3>
+                <p class="text-gray-500 text-sm">Compra, pagamento e acompanhamento</p>
+            </a>
+
+            <a href="#criar" class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center hover:border-emerald-500 transition-colors group">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-500/20 transition-colors">
+                    <i data-lucide="plus-circle" class="w-8 h-8 text-violet-600"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Criar Rifas</h3>
+                <p class="text-gray-500 text-sm">Configuracao, publicacao e sorteio</p>
+            </a>
+
+            <a href="#conta" class="glass rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 text-center hover:border-emerald-500 transition-colors group">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                    <i data-lucide="user" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Minha Conta</h3>
+                <p class="text-gray-500 text-sm">Perfil, seguranca e configuracoes</p>
+            </a>
+        </div>
+
+        <!-- FAQ Sections -->
+        <div class="space-y-8">
+            <!-- Participar -->
+            <section id="participar">
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                    <i data-lucide="ticket" class="w-6 h-6 text-emerald-600"></i>
+                    Participar de Rifas
+                </h2>
+                <div class="space-y-4" x-data="{ open: null }">
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'p1' ? null : 'p1'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Como comprar numeros em uma rifa?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'p1' }"></i>
+                        </button>
+                        <div x-show="open === 'p1'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Acesse a pagina da rifa, selecione os numeros desejados e clique em "Comprar". Voce sera direcionado para o pagamento via Pix ou cartao.</p>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'p2' ? null : 'p2'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Meu pagamento foi aprovado, onde vejo meus numeros?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'p2' }"></i>
+                        </button>
+                        <div x-show="open === 'p2'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Apos a confirmacao do pagamento, seus numeros aparecerao no seu perfil e na pagina da rifa. Voce tambem recebera um email de confirmacao.</p>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'p3' ? null : 'p3'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Posso cancelar minha compra?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'p3' }"></i>
+                        </button>
+                        <div x-show="open === 'p3'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Compras de numeros nao podem ser canceladas apos a confirmacao do pagamento, pois os numeros sao reservados imediatamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Criar -->
+            <section id="criar">
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                    <i data-lucide="plus-circle" class="w-6 h-6 text-violet-600"></i>
+                    Criar Rifas
+                </h2>
+                <div class="space-y-4" x-data="{ open: null }">
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'c1' ? null : 'c1'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Quanto custa criar uma rifa?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'c1' }"></i>
+                        </button>
+                        <div x-show="open === 'c1'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Criar uma rifa e gratuito! Cobramos apenas uma taxa de 5% sobre o valor arrecadado. Com Rifei Premium, essa taxa e reduzida.</p>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'c2' ? null : 'c2'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Como e feito o sorteio?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'c2' }"></i>
+                        </button>
+                        <div x-show="open === 'c2'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">O sorteio e realizado automaticamente na data programada usando algoritmo aleatorio certificado. O resultado e publicado na pagina da rifa e os participantes sao notificados.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conta -->
+            <section id="conta">
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                    <i data-lucide="user" class="w-6 h-6 text-blue-600"></i>
+                    Minha Conta
+                </h2>
+                <div class="space-y-4" x-data="{ open: null }">
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'a1' ? null : 'a1'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Como alterar minha senha?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'a1' }"></i>
+                        </button>
+                        <div x-show="open === 'a1'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Acesse Configuracoes > Seguranca > Alterar Senha. Voce precisara informar sua senha atual e a nova senha.</p>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+                        <button @click="open = open === 'a2' ? null : 'a2'" class="w-full p-5 text-left flex items-center justify-between">
+                            <span class="font-medium">Como me tornar verificado?</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'a2' }"></i>
+                        </button>
+                        <div x-show="open === 'a2'" x-collapse class="px-5 pb-5">
+                            <p class="text-gray-500">Para se tornar verificado, complete seu perfil com foto e documento de identidade. Nossa equipe analisara sua solicitacao em ate 48 horas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="mt-12 text-center">
+            <div class="glass rounded-3xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+                <i data-lucide="message-circle" class="w-12 h-12 mx-auto text-emerald-600 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Nao encontrou o que procurava?</h3>
+                <p class="text-gray-500 mb-6">Nossa equipe esta pronta para ajudar!</p>
+                <a href="/contato" class="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg inline-block">
+                    Fale Conosco
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
